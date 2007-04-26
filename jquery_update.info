@@ -1,0 +1,5 @@
+; $Id$
+name = JQuery Update
+description = Updates Drupal to use the latest version of JQuery.
+package = User Interface
+version = "$Name$"
