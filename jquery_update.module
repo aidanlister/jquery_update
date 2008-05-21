@@ -2,53 +2,67 @@
 // $Id$
 
 /**
- * @abstract
- * This Drupal module helps with updating core JQuery
- * Drupal 5 comes with JQuery 1.0.1
- * This module helps you to install a later version
- * 
- * @todo - js to fix collapse behavior?
+ * @file
+ * Updates Drupal to use the latest version of jQuery.
  */
 
 /**
- * Implementation of hook_menu()
+ * Implementation of hook_theme_registry_alter().
+ *
+ * Make jQuery Update's page preprocess function run *after* everything else's,
+ * so that a theme can't call drupal_get_js() and mess everything up.
  */
-function jquery_update_menu($may_cache) {
-  $items = array();
-  if (!$may_cache) {
-    $path = drupal_get_path('module', 'jquery_update');
-    drupal_add_js($path .'/compat-1.0.js');
-    drupal_add_js($path .'/collapse-fix.js', 'theme');
-  }
-  return $items;
+function jquery_update_theme_registry_alter(&$theme_registry) {
+  if (isset($theme_registry['page'])) {
+    // If jquery_update's preprocess function is there already, remove it.
+    if ($key = array_search('jquery_update_preprocess_page', $theme_registry['page']['preprocess functions'])) {
+      unset($theme_registry['page']['preprocess functions'][$key]);
+    }
+    // Now tack it on at the end so it runs after everything else.
+    $theme_registry['page']['preprocess functions'][] = 'jquery_update_preprocess_page';
+  } 
 }
 
 /**
- * Implementation of hook_requirements()
+ * Implementation of moduleName_preprocess_hook().
+ *
+ * Replace Drupal core's jquery.js with the new one from jQuery Update module.
  */
-function jquery_update_requirements($phase) {
-  $requirements = array();
-  $t = get_t();
-  switch ($phase) {
-    case 'install' :
-    case 'runtime' :
-      $path = drupal_get_path('module', 'jquery_update') .'/jquery.js';
-      if (file_exists($path) && file_exists('misc/jquery.js') && md5_file($path) != md5_file('misc/jquery.js')) {
-        $requirements['jquery'] = array(
-          'title' => $t('Please copy JQuery'),
-          'description' => $t('In order for the JQuery Update module to work correctly, please copy the file at %mod and use it to replace %core.', array('%core' => 'misc/jqeury.js', '%mod' => $path)),
-          'severity' => $phase == 'install' ? REQUIREMENT_WARNING : REQUIREMENT_ERROR,
-          'value' => $t('Copy jquery.js'),
-        );
-      }
-      elseif (!file_exists($path)) {
-        $requirements['jquery'] = array(
-          'title' => $t('jquery.js no longer exists in the JQuery Update directory'),
-          'description' => $t('You probably <em>moved</em> rather than <em>copied</em> the jquery.js file from %mod to %core. You should leave a copy of this file in the module directory so that will not lose this file when you upgrade to another revision of Drupal.', array('%core' => 'misc/jqeury.js', '%mod' => $path)),
-          'severity' => $phase == 'install' ? REQUIREMENT_WARNING : REQUIREMENT_ERROR,
-          'value' => $t('Copy jquery.js'),
-        );
-      }
+function jquery_update_preprocess_page(&$variables) {
+  // Only do this for pages that have JavaScript on them.
+  if (!empty($variables['scripts'])) {
+    // Get an array of all the JavaScript files loaded by Drupal on this page.
+    $scripts = drupal_add_js();
+
+    // Create a $scripts record for our new jQuery file.
+    $jquery_path = drupal_get_path('module', 'jquery_update') . '/jquery.js';
+    $new_jquery = array($jquery_path => $scripts['core']['misc/jquery.js']);
+
+    // Replace misc/jquery.js with ours.
+    $scripts['core'] = array_merge($new_jquery, $scripts['core']);
+    unset($scripts['core']['misc/jquery.js']);
+    $variables['scripts'] = drupal_get_js('header', $scripts);
   }
-  return $requirements;
+}
+
+/**
+ * Return the version of jQuery that is installed.
+ *
+ * This can be used by other modules' hook_requirements() to ensure that the
+ * proper version of jQuery is installed.
+ *
+ * @see version_compare
+ */
+function jquery_update_get_version() {
+  $version = 0;
+  $pattern = '# * jQuery ([0-9\.a-z]+) - New Wave Javascript#';
+  $jquery_path = drupal_get_path('module', 'jquery_update') . '/jquery.js';
+
+  // Return the version provided by jQuery Update.
+  $jquery = file_get_contents($jquery_path);
+  if (preg_match($pattern, $jquery, $matches)) {
+    $version = $matches[1];
+  }
+
+  return $version;
 }
