@@ -107,10 +107,11 @@ function jquery_update_get_version($jquery_path = NULL) {
  * Implementation of hook_flush_caches().
  */
 function jquery_update_flush_caches() {
-  // Find the versions ofjQuery provided by core and this module.
+  // Find the versions of jQuery provided by core and this module.
   $jquery_update_version = jquery_update_get_version();
   $jquery_core_version = jquery_update_get_version('misc/jquery.js');
 
   // Set a variable according to whether core's version needs to be replaced.
-  variable_set('jquery_update_replace', ($core_version < $jquery_update_version));
+  $replace = version_compare($jquery_core_version, $jquery_update_version, '<');
+  variable_set('jquery_update_replace', $replace);
 }
