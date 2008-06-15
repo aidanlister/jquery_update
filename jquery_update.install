@@ -42,3 +42,10 @@ function jquery_update_update_6100() {
 
   return $ret;
 }
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function jquery_update_uninstall() {
+  variable_del('jquery_update_replace');
+}

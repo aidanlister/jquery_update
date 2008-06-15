@@ -7,6 +7,22 @@
  */
 
 /**
+ * The path to the jQuery files that need to be replaced.
+ */
+define('JQUERY_UPDATE_REPLACE_PATH', drupal_get_path('module', 'jquery_update') . '/replace');
+
+/**
+ * Array of jQuery files to replace if jQuery is loaded.
+ */
+function jquery_update_get_replacements() {
+  return array(
+    'module' => array(
+      'misc/farbtastic/farbtastic.js' => 'farbtastic.js',
+    ),
+  );
+}
+
+/**
  * Implementation of hook_theme_registry_alter().
  *
  * Make jQuery Update's page preprocess function run *after* everything else's,
@@ -31,17 +47,33 @@ function jquery_update_theme_registry_alter(&$theme_registry) {
 function jquery_update_preprocess_page(&$variables) {
   // Only do this for pages that have JavaScript on them.
   if (!empty($variables['scripts'])) {
-    // Get an array of all the JavaScript files loaded by Drupal on this page.
-    $scripts = drupal_add_js();
+  
+    // If jquery is included check the version.
+    if (variable_get('jquery_update_replace', TRUE)) {
+      // Get an array of all the JavaScript files loaded by Drupal on this page.
+      $scripts = drupal_add_js();
 
-    // Create a $scripts record for our new jQuery file.
-    $jquery_path = drupal_get_path('module', 'jquery_update') . '/jquery.js';
-    $new_jquery = array($jquery_path => $scripts['core']['misc/jquery.js']);
+      // Replace jquery.js first.
+      $jquery_path = JQUERY_UPDATE_REPLACE_PATH . '/jquery.js';
+      $new_jquery = array($jquery_path => $scripts['core']['misc/jquery.js']);
+      $scripts['core'] = array_merge($new_jquery, $scripts['core']);
+      unset($scripts['core']['misc/jquery.js']);
 
-    // Replace misc/jquery.js with ours.
-    $scripts['core'] = array_merge($new_jquery, $scripts['core']);
-    unset($scripts['core']['misc/jquery.js']);
-    $variables['scripts'] = drupal_get_js('header', $scripts);
+      // Loop through each of the required replacements.
+      foreach (jquery_update_get_replacements() as $type => $replacements) {
+        foreach ($replacements as $find => $replace) {
+          // If the file to replace is loaded on this page...
+          if (isset($scripts[$type][$find])) {
+            // Create a new entry for the replacement file, and unset the original one.
+            $replace = JQUERY_UPDATE_REPLACE_PATH . '/' . $replace;
+            $scripts[$type][$replace] = $scripts[$type][$find];
+            unset($scripts[$type][$find]);
+          }
+        }
+      } 
+
+      $variables['scripts'] = drupal_get_js('header', $scripts);
+    }
   }
 }
 
@@ -53,10 +85,14 @@ function jquery_update_preprocess_page(&$variables) {
  *
  * @see version_compare
  */
-function jquery_update_get_version() {
+function jquery_update_get_version($jquery_path = NULL) {
   $version = 0;
   $pattern = '# * jQuery ([0-9\.a-z]+) - New Wave Javascript#';
-  $jquery_path = drupal_get_path('module', 'jquery_update') . '/jquery.js';
+  
+  // No file is passed in so default to the file included with this module.
+  if (is_null($jquery_path)) {
+    $jquery_path = JQUERY_UPDATE_REPLACE_PATH . '/jquery.js';
+  }
 
   // Return the version provided by jQuery Update.
   $jquery = file_get_contents($jquery_path);
@@ -65,4 +101,16 @@ function jquery_update_get_version() {
   }
 
   return $version;
+}
+
+/**
+ * Implementation of hook_flush_caches().
+ */
+function jquery_update_flush_caches() {
+  // Find the versions ofjQuery provided by core and this module.
+  $jquery_update_version = jquery_update_get_version();
+  $jquery_core_version = jquery_update_get_version('misc/jquery.js');
+
+  // Set a variable according to whether core's version needs to be replaced.
+  variable_set('jquery_update_replace', ($core_version < $jquery_update_version));
 }
