@@ -1,5 +1,10 @@
 // $Id$
 
+jQuery Update 6.x-1.x, xxxx-xx-xx
+---------------------------------
+#227687 by sun: Fixed improperly capitalized package name.
+
+
 jQuery Update 6.x-1.1, 2008-06-23
 ---------------------------------
 - Ships with jQuery 1.2.6 + replacement for farbtastic.js to fix IE 6
