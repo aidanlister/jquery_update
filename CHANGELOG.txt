@@ -2,6 +2,7 @@
 
 jQuery Update 6.x-1.x, xxxx-xx-xx
 ---------------------------------
+- Updated to use drupal 7 version of farbtastic.js.
 #227687 by sun: Fixed improperly capitalized package name.
 
 
