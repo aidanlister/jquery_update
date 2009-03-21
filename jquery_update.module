@@ -21,6 +21,9 @@ function jquery_update_get_replacements() {
     ),
     'core' => array(
       'misc/tabledrag.js' => 'tabledrag.js',
+      'misc/ahah.js' => 'ahah.js',
+      'misc/jquery.form.js' => 'jquery.form.js',
+      'misc/teaser.js' => 'teaser.js',
     ),
   );
 }
