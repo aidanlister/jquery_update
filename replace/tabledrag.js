@@ -110,10 +110,10 @@ Drupal.tableDrag.prototype.hideColumns = function(){
     }
 
     // Hide the column containing this field.
-    if (hidden && cell[0]) {
+    if (hidden && cell[0] && cell.css('display') != 'none') {
       // Add 1 to our indexes. The nth-child selector is 1 based, not 0 based.
       var columnIndex = $('td', cell.parent()).index(cell.get(0)) + 1;
-      var headerIndex = $('td', cell.parent()).index(cell.get(0)) + 1;
+      var headerIndex = $('td:not(:hidden)', cell.parent()).index(cell.get(0)) + 1;
       $('tr', this.table).each(function(){
         var row = $(this);
         var parentTag = row.parent().get(0).tagName.toLowerCase();
