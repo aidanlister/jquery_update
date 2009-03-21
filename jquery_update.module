@@ -18,12 +18,12 @@ function jquery_update_get_replacements() {
   return array(
     'module' => array(
       'misc/farbtastic/farbtastic.js' => 'farbtastic.js',
+      'misc/teaser.js' => 'teaser.js',
+      'misc/ahah.js' => 'ahah.js',
+      'misc/jquery.form.js' => 'jquery.form.js',
     ),
     'core' => array(
       'misc/tabledrag.js' => 'tabledrag.js',
-      'misc/ahah.js' => 'ahah.js',
-      'misc/jquery.form.js' => 'jquery.form.js',
-      'misc/teaser.js' => 'teaser.js',
     ),
   );
 }
