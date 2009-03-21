@@ -19,6 +19,9 @@ function jquery_update_get_replacements() {
     'module' => array(
       'misc/farbtastic/farbtastic.js' => 'farbtastic.js',
     ),
+    'core' => array(
+      'misc/tabledrag.js' => 'tabledrag.js',
+    ),
   );
 }
 
@@ -36,7 +39,7 @@ function jquery_update_theme_registry_alter(&$theme_registry) {
     }
     // Now tack it on at the end so it runs after everything else.
     $theme_registry['page']['preprocess functions'][] = 'jquery_update_preprocess_page';
-  } 
+  }
 }
 
 /**
@@ -47,7 +50,7 @@ function jquery_update_theme_registry_alter(&$theme_registry) {
 function jquery_update_preprocess_page(&$variables) {
   // Only do this for pages that have JavaScript on them.
   if (!empty($variables['scripts'])) {
-  
+
     // Perform the logic if either jQuery Update's jquery.js is newer than
     // core's, or if we're using a different compression type.
     if (variable_get('jquery_update_replace', TRUE) ||
@@ -71,7 +74,7 @@ function jquery_update_preprocess_page(&$variables) {
             unset($scripts[$type][$find]);
           }
         }
-      } 
+      }
 
       $variables['scripts'] = drupal_get_js('header', $scripts);
     }
@@ -89,7 +92,7 @@ function jquery_update_preprocess_page(&$variables) {
 function jquery_update_get_version($jquery_path = NULL) {
   $version = 0;
   $pattern = '# * jQuery ([0-9\.a-z]+) - New Wave Javascript#';
-  
+
   // No file is passed in so default to the file included with this module.
   if (is_null($jquery_path)) {
     $jquery_path = jquery_update_jquery_path();
