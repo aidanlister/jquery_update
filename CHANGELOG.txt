@@ -3,6 +3,7 @@
 jQuery Update 6.x-2.x, xxxx-xx-xx
 ---------------------------------
 - Updated to jQuery 1.3.x.
+- Removed Packed version. It is not longer distributed by jQuery.
 
 jQuery Update 6.x-1.x, xxxx-xx-xx
 ---------------------------------

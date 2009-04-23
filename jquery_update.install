@@ -44,6 +44,16 @@ function jquery_update_update_6100() {
 }
 
 /**
+ * The packed version of jQuery is no longer distributed. If that is the chosen
+ * version update to minified.
+ */
+function jquery_update_update_6200() {
+  if (variable_get('jquery_update_compression_type', 'min') == 'pack') {
+    variable_set('jquery_update_compression_type', 'min');
+  }
+}
+
+/**
  * Implementation of hook_uninstall().
  */
 function jquery_update_uninstall() {
