@@ -37,9 +37,11 @@ function jquery_update_get_replacements() {
  */
 function jquery_update_theme_registry_alter(&$theme_registry) {
   if (isset($theme_registry['page'])) {
-    // If jquery_update's preprocess function is there already, remove it.
-    if ($key = array_search('jquery_update_preprocess_page', $theme_registry['page']['preprocess functions'])) {
-      unset($theme_registry['page']['preprocess functions'][$key]);
+    if (count($theme_registry['page']['preprocess functions']) > 0) {
+      // If jquery_update's preprocess function is there already, remove it.
+      if ($key = array_search('jquery_update_preprocess_page', $theme_registry['page']['preprocess functions'])) {
+        unset($theme_registry['page']['preprocess functions'][$key]);
+      }
     }
     // Now tack it on at the end so it runs after everything else.
     $theme_registry['page']['preprocess functions'][] = 'jquery_update_preprocess_page';
