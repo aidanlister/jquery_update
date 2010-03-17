@@ -21,6 +21,7 @@ function jquery_update_get_replacements() {
       'misc/teaser.js' => 'teaser.js',
       'misc/ahah.js' => 'ahah.js',
       'misc/jquery.form.js' => 'jquery.form.js',
+      'misc/tabledrag.js' => 'tabledrag.js',
     ),
     'core' => array(
       'misc/tabledrag.js' => 'tabledrag.js',
