@@ -19,8 +19,8 @@ function jquery_update_get_replacements() {
     'module' => array(
       'misc/farbtastic/farbtastic.js' => 'farbtastic.js',
       'misc/teaser.js' => 'teaser.js',
-      'misc/ahah.js' => 'ahah.js',
       'misc/jquery.form.js' => 'jquery.form.js',
+      'misc/ahah.js' => 'ahah.js',
       'misc/tabledrag.js' => 'tabledrag.js',
     ),
     'core' => array(
