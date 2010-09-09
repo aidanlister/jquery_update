@@ -2,6 +2,7 @@
 
 jQuery Update 6.x-2.x, xxxx-xx-xx
 ---------------------------------
+#775162 by Bevan: Fixed tabledrag.js errors with nested tables.
 
 
 jQuery Update 6.x-2.0-alpha1, 2010-04-23
