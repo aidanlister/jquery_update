@@ -2,6 +2,7 @@
 
 jQuery Update 6.x-2.x, xxxx-xx-xx
 ---------------------------------
+#443718 by markus_petrux: Fixed PHP notices in jquery_update_update_6200().
 #775162 by Bevan: Fixed tabledrag.js errors with nested tables.
 
 

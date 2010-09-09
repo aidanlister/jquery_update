@@ -48,9 +48,13 @@ function jquery_update_update_6100() {
  * version update to minified.
  */
 function jquery_update_update_6200() {
+  $ret = array();
+
   if (variable_get('jquery_update_compression_type', 'min') == 'pack') {
     variable_set('jquery_update_compression_type', 'min');
   }
+
+  return $ret;
 }
 
 /**
