@@ -1,4 +1,3 @@
-; $Id$
 name = jQuery Update
 description = Updates Drupal to use the latest version of jQuery.
 package = User interface
